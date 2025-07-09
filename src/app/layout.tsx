@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
+  SignedOut,
   SignedIn,
   UserButton,
 } from "@clerk/nextjs";
@@ -34,11 +35,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" afterSignOutUrl="/">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ClerkProvider signInFallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/dashboard" afterSignOutUrl="/">
           <Providers>
+            <nav className="flex items-center justify-between px-6 py-4 border-b">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem className="mx-3">
+                    <Link href="/">Inicio</Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem className="mx-3">
+                    <Link href="/about">Acerca de</Link>
+                  </NavigationMenuItem>
+                  {/* Agrega más items aquí */}
+                </NavigationMenuList>
+              </NavigationMenu>
+              <div>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <Link href="/sign-in">
+                    <Button>Iniciar sesión</Button>
+                  </Link>
+                </SignedOut>
+              </div>
+            </nav>
             {children}
           </Providers>
         </ClerkProvider>
