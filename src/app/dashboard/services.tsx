@@ -96,7 +96,7 @@ export default function ServicesPage() {
         const response = await fetch(`https://api.chipipay.com/v1/skus?${categoriesQuery}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${process.env.CHIPI_SK_KEY}`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_CHIPI_SK_KEY}`,
           },
         });
         if (!response.ok) throw new Error("Error al obtener servicios");
@@ -239,14 +239,14 @@ function CheckoutDialogForm({ servicio }: { servicio: Sku }) {
       const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${process.env.CHIPI_SK_KEY}`,
+          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_CHIPI_SK_KEY}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          walletAddress: wallet.publicKey,
+          walletAddress: process.env.NEXT_PUBLIC_ARBITRUM_PUBLIC_KEY,
           skuId: servicio.id,
           chainId: "ARBITRUM",
-          chainToken: "USDC",
+          chainToken: "MXNB",
           mxnAmount: servicio.fixedAmount || parseFloat(formData.amount),
           reference: formData.reference,
           transactionHash: transactionHash

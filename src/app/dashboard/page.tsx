@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input"
 import { useUser, useAuth } from "@clerk/nextjs";
@@ -9,11 +9,34 @@ import { User, Wallet } from "lucide-react";
 import { useCreateWallet } from "@chipi-pay/chipi-sdk";
 import ServicesPage from "./services";
 import { completeOnboarding } from "@/lib/actions";
+import { checkBalance, mxnbArbitrumAddress } from "@/lib/arbitrumTx";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
-  // Simulación de balance, reemplaza por el real usando chipi-sdk si lo tienes
-  const balance = 12345.67;
+  const [balance, setBalance] = useState<bigint | null>(null);
+  const [balanceLoading, setBalanceLoading] = useState(true);
+
+  // Obtener el balance de MXNB
+  useEffect(() => {
+    async function fetchBalance() {
+      try {
+        const balanceResult = await checkBalance({
+          tokenAddress: mxnbArbitrumAddress,
+          account: "0x86300E0a857aAB39A601E89b0e7F15e1488d9F0C" as `0x${string}`,
+        });
+        console.log("balance", balanceResult);
+        setBalance(balanceResult);
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+        setBalance(null);
+      } finally {
+        setBalanceLoading(false);
+      }
+    }
+    
+    fetchBalance();
+  }, []);
+
   const { createWalletAsync } = useCreateWallet();
   const { getToken } = useAuth();
   const [pin, setPin] = useState("");
@@ -126,7 +149,15 @@ export default function DashboardPage() {
             <CardTitle>Balance MXNB</CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-lg font-medium">{balance.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}</span>
+            <span className="text-lg font-medium">
+              {balanceLoading ? (
+                "Cargando..."
+              ) : balance !== null ? (
+                `${Number(balance) / 10**6} MXNB`
+              ) : (
+                "Error al cargar"
+              )}
+            </span>
           </CardContent>
         </Card>
       </div>

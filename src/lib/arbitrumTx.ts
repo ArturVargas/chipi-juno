@@ -2,6 +2,7 @@ import { createPublicClient, createWalletClient, http, Abi, Hex, erc20Abi } from
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrum } from 'viem/chains';
 
+const arbitrumPrivateKey = process.env.ARBITRUM_PK as Hex;
 export const publicClient = createPublicClient({
   chain: arbitrum,
   transport: http()
@@ -9,7 +10,8 @@ export const publicClient = createPublicClient({
 
 export function getWalletClient(privateKey: string) {
     console.log("privateKey", privateKey);
-  const account = privateKeyToAccount(process.env.ARBITRUM_PK as Hex);
+    console.log("process.env.ARBITRUM_PK", arbitrumPrivateKey);
+  const account = privateKeyToAccount(arbitrumPrivateKey);
   return {
     walletClient: createWalletClient({
       chain: arbitrum,
@@ -154,7 +156,7 @@ export async function sendRechargeTx({
   }
   
   // 4. Ejecutar newRecharge
-  console.log("Ejecutando newRecharge...");
+  console.log("Ejecutando newRecharge...", account);
   const txHash = await walletClient.writeContract({
     address: contractAddress,
     abi,
