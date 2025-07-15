@@ -245,7 +245,7 @@ function CheckoutDialogForm({ servicio }: { servicio: Sku }) {
         body: JSON.stringify({
           walletAddress: process.env.NEXT_PUBLIC_ARBITRUM_PUBLIC_KEY,
           skuId: servicio.id,
-          chainId: "ARBITRUM",
+          chain: "ARBITRUM",
           chainToken: "MXNB",
           mxnAmount: servicio.fixedAmount || parseFloat(formData.amount),
           reference: formData.reference,
